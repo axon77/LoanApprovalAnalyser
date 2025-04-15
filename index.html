@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Approval Analysis</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #f8961e;
+            --info: #90e0ef;
+            --dark: #1d3557;
+            --light: #f8f9fa;
+            --background: #f5f7ff;
+            --white: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white);
+            padding: 1.5rem 0;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background-color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+        }
+
+        main {
+            padding: 2rem 0;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card {
+            background-color: var(--white);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 15px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+
+        .range-slider {
+            width: 100%;
+            height: 8px;
+            background-color: #ddd;
+            outline: none;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .range-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .slider-value {
+            font-size: 1rem;
+            margin-top: 0.5rem;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .progress-container {
+            width: 100%;
+            margin-bottom: 2rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: #ddd;
+            border-radius: 5px;
+            margin-bottom: 0.5rem;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(to right, var(--primary), var(--primary-light));
+            border-radius: 5px;
+            transition: width 0.5s ease;
+            width: 25%;
+        }
+
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .tab-container {
+            margin-bottom: 2rem;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab {
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .tab.active {
+            color: var(--primary);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-container {
+            display: none;
+            padding: 2rem;
+            background-color: var(--white);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .result-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            margin: 0 auto 2rem;
+            position: relative;
+            background: conic-gradient(var(--primary) 0% 75%, #ddd 75% 100%);
+        }
+
+        .result-inner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 160px;
+            height: 160px;
+            background-color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--dark);
+        }
+
+        .result-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+            text-align: left;
+        }
+
+        .result-item {
+            background-color: var(--light);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .result-item h4 {
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+            margin-left: 5px;
+        }
+
+        .tooltip-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            background-color: #ddd;
+            color: var(--dark);
+            border-radius: 50%;
+            font-size: 12px;
+        }
+
+        .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--dark);
+            color: var(--white);
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8rem;
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon input {
+            padding-left: 40px;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+
+        /* Animation classes */
+        .animate-pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .shake {
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        .spin {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Loader */
+        .loader {
+            display: none;
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(67, 97, 238, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                </div>
+                <span>LoanSmart Analyzer</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress" id="progress-bar"></div>
+            </div>
+            <div class="progress-labels">
+                <span>Personal Info</span>
+                <span>Financial Details</span>
+                <span>Loan Details</span>
+                <span>Results</span>
+            </div>
+        </div>
+
+        <div class="tab-container">
+            <div class="tabs">
+                <div class="tab active" data-tab="personal">1. Applicant Information</div>
+                <div class="tab" data-tab="financial">2. Income & Financials</div>
+                <div class="tab" data-tab="loan">3. Loan Details</div>
+                <div class="tab" data-tab="other">4. Other Considerations</div>
+            </div>
+
+            <form id="loan-form">
+                <div class="tab-content active" id="personal-tab">
+                    <div class="card">
+                        <h2 class="section-title">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            Personal Details
+                        </h2>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="age">Age</label>
+                                <input type="number" id="age" name="age" min="18" max="100" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="gender">Gender</label>
+                                <select id="gender" name="gender" required>
+                                    <option value="">Select Gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="marital-status">Marital Status</label>
+                                <select id="marital-status" name="marital-status" required>
+                                    <option value="">Select Status</option>
+                                    <option value="single">Single</option>
+                                    <option value="married">Married</option>
+                                    <option value="divorced">Divorced</option>
+                                    <option value="widowed">Widowed</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="dependents">Number of Dependents</label>
+                                <input type="number" id="dependents" name="dependents" min="0" max="10" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="education">Education Level</label>
+                                <select id="education" name="education" required>
+                                    <option value="">Select Education Level</option>
+                                    <option value="high-school">High School</option>
+                                    <option value="bachelor">Bachelor's Degree</option>
+                                    <option value="master">Master's Degree</option>
+                                    <option value="phd">PhD or Higher</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="employment-status">Employment Status</label>
+                                <select id="employment-status" name="employment-status" required>
+                                    <option value="">Select Status</option>
+                                    <option value="self-employed">Self-employed</option>
+                                    <option value="salaried">Salaried</option>
+                                    <option value="unemployed">Unemployed</option>
+                                    <option value="business">Business Owner</option>
+                                    <option value="retired">Retired</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="experience">Years of Work Experience</label>
+                                <input type="number" id="experience" name="experience" min="0" max="50" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="credit-score">Credit Score</label>
+                                <input type="range" id="credit-score" name="credit-score" min="300" max="850" class="range-slider" required>
+                                <div class="slider-value" id="credit-score-value">575</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="previous-defaults">Previous Defaults</label>
+                                <select id="previous-defaults" name="previous-defaults" required>
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="area-type">Residential Area Type</label>
+                                <select id="area-type" name="area-type" required>
+                                    <option value="">Select Area Type</option>
+                                    <option value="urban">Urban</option>
+                                    <option value="semi-urban">Semi-urban</option>
+                                    <option value="rural">Rural</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <button type="button" class="btn" id="next-to-financial">Next: Financial Details</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="financial-tab">
+                    <div class="card">
+                        <h2 class="section-title">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="1" x2="12" y2="23"></line>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                            </svg>
+                            Income & Financial Details
+                        </h2>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="monthly-income">Applicant's Monthly Income ($)</label>
+                                <div class="input-with-icon">
+                                    <span class="input-icon">$</span>
+                                    <input type="number" id="monthly-income" name="monthly-income" min="0" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="coapplicant-income">Co-applicant's Income ($)</label>
+                                <div class="input-with-icon">
+                                    <span class="input-icon">$</span>
+                                    <input type="number" id="coapplicant-income" name="coapplicant-income" min="0">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="household-income">Total Household Income ($)</label>
+                                <div class="input-with-icon">
+                                    <span class="input-icon">$</span>
+                                    <input type="number" id="household-income" name="household-income" min="0" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="existing-emi">Existing EMIs / Liabilities ($)</label>
+                                <div class="input-with-icon">
+                                    <span class="input-icon">$</span>
+                                    <input type="number" id="existing-emi" name="existing-emi" min="0" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="dti-ratio">Debt-to-Income Ratio (%)</label>
+                                <input type="range" id="dti-ratio" name="dti-ratio" min="0" max="100" class="range-slider" required>
+                                <div class="slider-value" id="dti-ratio-value">50%</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="savings">Savings or Assets Owned ($)</label>
+                                <div class="input-with-icon">
+                                    <span class="input-icon">$</span>
+                                    <input type="number" id="savings" name="savings" min="0" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <button type="button" class="btn btn-outline" id="back-to-personal">Back: Personal Information</button>
+                            <button type="button" class="btn" id="next-to-loan">Next: Loan Details</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="loan-tab">
+                    <div class="card">
+                        <h2 class="section-title">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                            </svg>
+                            Loan Details
+                        </h2>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="loan-amount">Loan Amount Requested ($)</label>
+                                <div class="input-with-icon">
+                                    <span class="input-icon">$</span>
+                                    <input type="number" id="loan-amount" name="loan-amount" min="1000" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="loan-term">Loan Term / Tenure (months)</label>
+                                <input type="number" id="loan-term" name="loan-term" min="6" max="360" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="interest-rate">Interest Rate (% per annum)</label>
+                                <input type="range" id="interest-rate" name="interest-rate" min="1" max="30" step="0.25" class="range-slider" required>
+                                <div class="slider-value" id="interest-rate-value">15.5%</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="loan-type">Type of Loan</label>
+                                <select id="loan-type" name="loan-type" required>
+                                    <option value="">Select Loan Type</option>
+                                    <option value="home">Home Loan</option>
+                                    <option value="auto">Auto Loan</option>
+                                    <option value="personal">Personal Loan</option>
+                                    <option value="education">Education Loan</option>
+                                    <option value="business">Business Loan</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="loan-purpose">Purpose of Loan</label>
+                                <select id="loan-purpose" name="loan-purpose" required>
+                                    <option value="">Select Purpose</option>
+                                    <option value="home-purchase">Home Purchase</option>
+                                    <option value="vehicle-purchase">Vehicle Purchase</option>
+                                    <option value="education">Education</option>
+                                    <option value="debt-consolidation">Debt Consolidation</option>
+                                    <option value="home-improvement">Home Improvement</option>
+                                    <option value="business">Business</option>
+                                    <option value="wedding">Wedding</option>
+                                    <option value="vacation">Vacation</option>
+                                    <option value="medical">Medical Expenses</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="collateral">Collateral or Security Offered</label>
+                                <select id="collateral" name="collateral" required>
+                                    <option value="">Select Collateral Type</option>
+                                    <option value="none">None (Unsecured)</option>
+                                    <option value="property">Property</option>
+                                    <option value="vehicle">Vehicle</option>
+                                    <option value="fixed-deposit">Fixed Deposit</option>
+                                    <option value="gold">Gold</option>
+                                    <option value="stocks">Stocks/Mutual Funds</option>
+                                    <option value="insurance">Insurance Policy</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="ltv-ratio">Loan-to-Value (LTV) Ratio (%)</label>
+                                <input type="range" id="ltv-ratio" name="ltv-ratio" min="0" max="100" class="range-slider">
+                                <div class="slider-value" id="ltv-ratio-value">50%</div>
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <button type="button" class="btn btn-outline" id="back-to-financial">Back: Financial Details</button>
+                            <button type="button" class="btn" id="next-to-other">Next: Other Considerations</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="other-tab">
+                    <div class="card">
+                        <h2 class="section-title">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                <polyline points="10 9 9 9 8 9"></polyline>
+                            </svg>
+                            Other Considerations (Optional)
+                        </h2>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="banking-history">Banking History (Years)</label>
+                                <input type="number" id="banking-history" name="banking-history" min="0" max="50">
+                            </div>
+                            <div class="form-group">
+                                <label for="employment-type">Employment Type</label>
+                                <select id="employment-type" name="employment-type">
+                                    <option value="">Select Employment Type</option>
+                                    <option value="govt">Government</option>
+                                    <option value="private">Private Sector</option>
+                                    <option value="public">Public Sector</option>
+                                    <option value="multinational">Multinational Corporation</option>
+                                    <option value="startup">Startup</option>
+                                    <option value="freelancer">Freelancer</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="employer-rating">
+                                    Employer Rating or Tier
+                                    <div class="tooltip">
+                                        <span class="tooltip-icon">?</span>
+                                        <span class="tooltip-text">Rating of your employer based on market reputation and stability</span>
+                                    </div>
+                                </label>
+                                <select id="employer-rating" name="employer-rating">
+                                    <option value="">Select Rating</option>
+                                    <option value="1">Tier 1 (Top Companies)</option>
+                                    <option value="2">Tier 2</option>
+                                    <option value="3">Tier 3</option>
+                                    <option value="unknown">Unknown/Not Applicable</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="document-verification">Document Verification Flags</label>
+                                <select id="document-verification" name="document-verification">
+                                    <option value="">Select Status</option>
+                                    <option value="complete">KYC Complete</option>
+                                    <option value="partial">Partial Verification</option>
+                                    <option value="pending">Verification Pending</option>
+                                    <option value="not-started">Not Started</option>
+                                </select>
+                            </div>
